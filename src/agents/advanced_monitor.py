@@ -747,24 +747,86 @@ async def main():
         To add/remove agents, modify the YAML file and restart
         Press 'r' during monitoring to reload configuration
     """
+    import argparse
+    
+    parser = argparse.ArgumentParser(
+        description='Advanced Agent Monitor - Curses-based real-time monitoring for distributed AI agents'
+    )
+    parser.add_argument(
+        '--config', '-c',
+        type=str,
+        help='Path to agents configuration file (default: config/agents.yaml)'
+    )
+    parser.add_argument(
+        '--refresh', '-r',
+        type=int,
+        default=5,
+        help='Refresh interval in seconds (default: 5)'
+    )
+    parser.add_argument(
+        '--single-agent', '-s',
+        action='store_true',
+        help='Monitor only Agent 113 without config file'
+    )
+    
+    args = parser.parse_args()
+    
     try:
-        monitor = AdvancedAgentMonitor()
+        if args.single_agent:
+            # Quick single-agent mode using environment variables
+            from pathlib import Path
+            import os
+            from dotenv import load_dotenv
+            
+            # Load environment configuration
+            env_path = Path(__file__).parent.parent.parent / '.env'
+            if env_path.exists():
+                load_dotenv(env_path)
+            
+            monitor = AdvancedAgentMonitor()
+            monitor.agents = {}  # Clear config-loaded agents
+            
+            # Add Agent 113 directly
+            agent_endpoint = os.getenv('AGENT_113_URL', 'http://192.168.1.113:11434')
+            agent_model = os.getenv('AGENT_113_MODEL', 'devstral:latest')
+            
+            monitor.add_agent('agent_113', agent_endpoint, agent_model)
+            monitor.refresh_interval = args.refresh
+            
+            print(f"🚀 Advanced Monitor - Single Agent Mode")
+            print(f"📡 Monitoring: {agent_endpoint}")
+            print(f"🤖 Model: {agent_model}")
+            
+        else:
+            monitor = AdvancedAgentMonitor()
+            if args.config:
+                monitor.config_loader.config_path = args.config
+                monitor.config_loader.load_config()
+                monitor._initialize_agents_from_config()
+            
+            if args.refresh:
+                monitor.refresh_interval = args.refresh
         
         if not monitor.agents:
             print("No active agents found in configuration.")
-            print("Please check config/agents.yaml and ensure at least one agent has status: 'active'")
+            if not args.single_agent:
+                print("Please check config/agents.yaml and ensure at least one agent has status: 'active'")
+                print("Or use --single-agent flag to monitor only Agent 113")
             return
             
         print(f"Loaded {len(monitor.agents)} agents from configuration:")
         for agent_id, agent in monitor.agents.items():
             print(f"  - {agent_id}: {agent.endpoint} ({agent.model})")
         print()
+        print("🎮 Controls: q=quit, r=refresh, c=reload config")
+        print("Starting advanced monitoring interface...")
         
         await monitor.run()
         
     except FileNotFoundError as e:
         print(f"Configuration error: {e}")
         print("Please ensure config/agents.yaml exists and is properly formatted.")
+        print("Or use --single-agent flag to monitor only Agent 113")
     except yaml.YAMLError as e:
         print(f"YAML configuration error: {e}")
         print("Please check config/agents.yaml for syntax errors.")

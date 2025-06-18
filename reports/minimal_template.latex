@@ -1,0 +1,19 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+
+% Define title and author
+\title{ROCm Stable Diffusion Performance Acceleration Project\\Comprehensive Technical Report}
+\author{Tony Rawlins with Agent 113 (Qwen2.5-Coder) Architecture Lead}
+\date{June 18, 2025}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+$body$
+
+\end{document}

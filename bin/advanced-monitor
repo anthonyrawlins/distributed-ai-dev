@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+# Advanced Agent Monitor Launcher
+# Curses-based real-time monitoring for distributed AI agents
+#
+# Usage: advanced-monitor [options]
+#   -c, --config FILE  Path to agents configuration file (default: config/agents.yaml)
+#   -r, --refresh N    Refresh interval in seconds (default: 5)
+#   -s, --single-agent Monitor only Agent 113 without config file
+#   -h, --help         Show help message
+#
+# Controls:
+#   q - Quit
+#   r - Force refresh
+#   c - Reload configuration
+#
+
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DISTRIBUTED_AI_DIR="$(dirname "$SCRIPT_DIR")"
+
+# Set environment variables if not already set
+if [ -f "$DISTRIBUTED_AI_DIR/.env" ]; then
+    export $(grep -v '^#' "$DISTRIBUTED_AI_DIR/.env" | xargs)
+fi
+
+# Change to distributed-ai-dev directory for relative paths to work
+cd "$DISTRIBUTED_AI_DIR"
+
+# Run the advanced monitor
+exec python3 "$DISTRIBUTED_AI_DIR/src/agents/advanced_monitor.py" "$@"

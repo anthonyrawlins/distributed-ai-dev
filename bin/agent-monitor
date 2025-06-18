@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+# Agent 113 Monitor Launcher
+# Dedicated monitoring for DevStral Agent 113
+#
+# Usage: agent-monitor
+#
+
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DISTRIBUTED_AI_DIR="$(dirname "$SCRIPT_DIR")"
+
+# Set environment variables if not already set
+if [ -f "$DISTRIBUTED_AI_DIR/.env" ]; then
+    export $(grep -v '^#' "$DISTRIBUTED_AI_DIR/.env" | xargs)
+fi
+
+# Run the agent 113 monitor
+exec python3 "$DISTRIBUTED_AI_DIR/orchestration/monitor_agent_113.py" "$@"

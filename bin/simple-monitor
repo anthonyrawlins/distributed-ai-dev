@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# Simple Agent Monitor Launcher
+# Real-time monitoring for distributed AI agents
+#
+# Usage: simple-monitor [options]
+#   -r, --refresh N    Refresh interval in seconds (default: 5)
+#   -e, --endpoint URL Agent endpoint URL (overrides environment)
+#   -m, --model NAME   Model name (overrides environment)
+#   -h, --help         Show help message
+#
+
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DISTRIBUTED_AI_DIR="$(dirname "$SCRIPT_DIR")"
+
+# Set environment variables if not already set
+if [ -f "$DISTRIBUTED_AI_DIR/.env" ]; then
+    export $(grep -v '^#' "$DISTRIBUTED_AI_DIR/.env" | xargs)
+fi
+
+# Run the simple monitor
+exec python3 "$DISTRIBUTED_AI_DIR/src/agents/simple_monitor.py" "$@"

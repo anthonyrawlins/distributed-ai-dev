@@ -407,23 +407,43 @@ async def print_monitoring_dashboard(agent: AgentMonitor, system_metrics: Dict[s
     print("=" * 60)
     print("Press Ctrl+C to exit | Refresh every 5 seconds")
 
-async def run_simple_monitor():
+async def run_simple_monitor(refresh_interval: int = 5):
     """
     Execute the main monitoring loop for the simple interface.
     
     Initializes the agent monitor, runs continuous metric collection,
     and displays real-time performance data until interrupted by user.
     
+    Args:
+        refresh_interval: Seconds between monitoring updates
+    
     Raises:
         KeyboardInterrupt: On user termination request (Ctrl+C)
     """
+    # Load agent configuration from environment or defaults
+    from pathlib import Path
+    import os
+    from dotenv import load_dotenv
+    
+    # Try to load environment configuration
+    env_path = Path(__file__).parent.parent.parent / '.env'
+    if env_path.exists():
+        load_dotenv(env_path)
+    
+    # Agent configuration from environment variables or defaults
+    agent_endpoint = os.getenv('AGENT_113_URL', 'http://192.168.1.113:11434')
+    agent_model = os.getenv('AGENT_113_MODEL', 'devstral:latest')
+    
     agent = AgentMonitor(
         agent_id='agent_113_devstral',
-        endpoint='http://192.168.1.113:11434',
-        model='devstral:latest'
+        endpoint=agent_endpoint,
+        model=agent_model
     )
     
-    print("🚀 Starting Agent Monitor...")
+    print("🚀 Starting Simple Agent Monitor...")
+    print(f"📡 Monitoring: {agent_endpoint}")
+    print(f"🤖 Model: {agent_model}")
+    print(f"🔄 Refresh: {refresh_interval}s")
     print("Collecting initial metrics...")
     
     try:
@@ -453,6 +473,41 @@ async def run_simple_monitor():
     except Exception as e:
         print(f"\nError running monitor: {e}")
 
+def main():
+    """Main entry point with argument parsing"""
+    import argparse
+    
+    parser = argparse.ArgumentParser(
+        description='Simple Agent Monitor - Real-time monitoring for distributed AI agents'
+    )
+    parser.add_argument(
+        '--refresh', '-r', 
+        type=int, 
+        default=5,
+        help='Refresh interval in seconds (default: 5)'
+    )
+    parser.add_argument(
+        '--endpoint', '-e',
+        type=str,
+        help='Agent endpoint URL (overrides environment)'
+    )
+    parser.add_argument(
+        '--model', '-m',
+        type=str,
+        help='Model name (overrides environment)'
+    )
+    
+    args = parser.parse_args()
+    
+    # Override environment if arguments provided
+    if args.endpoint:
+        os.environ['AGENT_113_URL'] = args.endpoint
+    if args.model:
+        os.environ['AGENT_113_MODEL'] = args.model
+    
+    # Run monitor
+    asyncio.run(run_simple_monitor(args.refresh))
+
 if __name__ == "__main__":
     """
     Entry point for the simple monitoring system.
@@ -460,4 +515,4 @@ if __name__ == "__main__":
     Starts the monitoring loop and handles graceful shutdown on
     keyboard interrupt or unexpected errors.
     """
-    asyncio.run(run_simple_monitor())
+    main()

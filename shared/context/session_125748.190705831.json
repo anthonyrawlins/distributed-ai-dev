@@ -1,0 +1,18 @@
+{
+  "session_id": "125748.190716051",
+  "config": {
+    "distributed_ai_base": "/home/tony/AI/ROCm/distributed-ai-dev",
+    "shared_workspace": "/home/tony/AI/ROCm/distributed-ai-dev/shared",
+    "results_dir": "/home/tony/AI/ROCm/distributed-ai-dev/orchestration/results",
+    "agent_113_url": "http://192.168.1.113:11434"
+  },
+  "active_tasks": {},
+  "shared_files": [],
+  "coordination_log": [
+    {
+      "timestamp": 125748.191250354,
+      "message": "Session context initialized: /home/tony/AI/ROCm/distributed-ai-dev/shared/context/session_125748.190705831.json",
+      "source": "claude_interface"
+    }
+  ]
+}

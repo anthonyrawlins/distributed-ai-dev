@@ -1,0 +1,34 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{fancyvrb}
+\usepackage{enumitem}
+
+% Define title and author
+\title{ROCm Stable Diffusion Performance Acceleration Project\\Comprehensive Technical Report}
+\author{Tony Rawlins with Agent 113 (Qwen2.5-Coder) Architecture Lead}
+\date{June 18, 2025}
+
+% Setup for code blocks
+\DefineShortVerb[commandchars=\\\{\}]{\|}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+
+% Setup for tables
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+$body$
+
+\end{document}
