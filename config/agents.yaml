@@ -26,9 +26,9 @@
 
 agents:
   agent_113:
-    name: "DevStral Senior Architect"
+    name: "Qwen2.5-Coder Senior Architect"
     endpoint: "http://192.168.1.113:11434"
-    model: "devstral:latest"
+    model: "qwen2.5-coder:latest"
     specialization: "Senior Kernel Development & ROCm Optimization"
     priority: 1
     status: "active"
@@ -46,8 +46,8 @@ agents:
       cpu_cores: 24
       ram_gb: 64
     performance_targets:
-      min_tokens_per_second: 5.0
-      max_response_time_ms: 30000
+      min_tokens_per_second: 50.0
+      max_response_time_ms: 15000
       target_availability: 0.99
     tasks:
       current:
