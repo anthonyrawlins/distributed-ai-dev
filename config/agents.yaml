@@ -60,6 +60,41 @@ agents:
       performance_check_interval: 300
       metrics_retention_hours: 24
 
+  agent_27:
+    name: "CodeLlama Development Assistant"
+    endpoint: "http://192.168.1.27:11434"
+    model: "codellama:latest"
+    specialization: "Code Generation & Development Support"
+    priority: 2
+    status: "active"
+    capabilities:
+      - "code_generation"
+      - "code_completion"
+      - "debugging_assistance"
+      - "code_review"
+      - "algorithm_implementation"
+      - "documentation_generation"
+      - "testing_support"
+    hardware:
+      gpu_type: "AMD Radeon RX 9060XT"
+      vram_gb: 16
+      cpu_cores: 16
+      ram_gb: 32
+    performance_targets:
+      min_tokens_per_second: 4.0
+      max_response_time_ms: 25000
+      target_availability: 0.95
+    tasks:
+      current:
+        - "Code generation and completion tasks"
+        - "Development workflow automation"
+        - "Algorithm optimization assistance"
+      completed: []
+    monitoring:
+      health_check_interval: 30
+      performance_check_interval: 300
+      metrics_retention_hours: 24
+
   # Example configuration for additional agents (uncomment and modify as needed)
   # agent_114:
   #   name: "CodeStral Testing Specialist" 
