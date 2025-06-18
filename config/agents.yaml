@@ -1,0 +1,129 @@
+# Distributed AI Development System - Agent Configuration
+# 
+# This file defines the configuration for all agents in the distributed AI network.
+# Each agent represents a remote Ollama instance with specific capabilities and models.
+#
+# Configuration Format:
+# agents:
+#   agent_id:
+#     name: Human-readable agent name
+#     endpoint: HTTP endpoint for Ollama API communication
+#     model: Default model to use for this agent
+#     specialization: Agent's area of expertise
+#     priority: Workload priority (1=highest, 5=lowest)
+#     status: Current operational status
+#     capabilities: List of agent capabilities
+#     hardware: Hardware configuration details
+#     performance_targets: Expected performance metrics
+#
+# Usage:
+#   - Modify this file to add, remove, or reconfigure agents
+#   - Restart monitoring systems to pick up configuration changes
+#   - Use 'disabled' status to temporarily exclude agents from monitoring
+#
+# Author: Distributed AI Development System
+# Version: 1.0
+
+agents:
+  agent_113:
+    name: "DevStral Senior Architect"
+    endpoint: "http://192.168.1.113:11434"
+    model: "devstral:latest"
+    specialization: "Senior Kernel Development & ROCm Optimization"
+    priority: 1
+    status: "active"
+    capabilities:
+      - "kernel_development"
+      - "rocm_optimization"
+      - "flashattention_implementation"
+      - "vae_decoder_optimization"
+      - "memory_management"
+      - "performance_analysis"
+      - "pytorch_integration"
+    hardware:
+      gpu_type: "AMD Radeon RX 7900 XTX"
+      vram_gb: 24
+      cpu_cores: 16
+      ram_gb: 64
+    performance_targets:
+      min_tokens_per_second: 5.0
+      max_response_time_ms: 30000
+      target_availability: 0.99
+    tasks:
+      current:
+        - "FlashAttention RDNA3 Optimization"
+        - "VAE Decoder Performance Enhancement"
+        - "Advanced Memory Management Systems"
+      completed: []
+    monitoring:
+      health_check_interval: 30
+      performance_check_interval: 300
+      metrics_retention_hours: 24
+
+  # Example configuration for additional agents (uncomment and modify as needed)
+  # agent_114:
+  #   name: "CodeStral Testing Specialist" 
+  #   endpoint: "http://192.168.1.114:11434"
+  #   model: "codestral:latest"
+  #   specialization: "Testing & Quality Assurance"
+  #   priority: 2
+  #   status: "disabled"  # Currently not available
+  #   capabilities:
+  #     - "unit_testing"
+  #     - "integration_testing"
+  #     - "code_review"
+  #     - "performance_benchmarking"
+  #   hardware:
+  #     gpu_type: "NVIDIA RTX 4090"
+  #     vram_gb: 24
+  #     cpu_cores: 12
+  #     ram_gb: 32
+  #   performance_targets:
+  #     min_tokens_per_second: 8.0
+  #     max_response_time_ms: 15000
+  #     target_availability: 0.95
+
+  # agent_115:
+  #   name: "Documentation Specialist"
+  #   endpoint: "http://192.168.1.115:11434" 
+  #   model: "llama3:latest"
+  #   specialization: "Documentation & Technical Writing"
+  #   priority: 3
+  #   status: "disabled"
+  #   capabilities:
+  #     - "technical_writing"
+  #     - "api_documentation"
+  #     - "user_guides"
+  #     - "code_commenting"
+  #   hardware:
+  #     gpu_type: "Integrated"
+  #     vram_gb: 0
+  #     cpu_cores: 8
+  #     ram_gb: 16
+  #   performance_targets:
+  #     min_tokens_per_second: 3.0
+  #     max_response_time_ms: 45000
+  #     target_availability: 0.90
+
+# Global monitoring configuration
+monitoring:
+  refresh_interval_seconds: 5
+  performance_window_minutes: 5
+  max_history_samples: 100
+  alert_thresholds:
+    min_tokens_per_second: 2.0
+    max_response_time_ms: 60000
+    min_availability: 0.85
+  
+# Network configuration
+network:
+  timeout_seconds: 30
+  retry_attempts: 3
+  retry_delay_seconds: 5
+
+# Logging configuration  
+logging:
+  level: "INFO"
+  file: "logs/agent_monitoring.log"
+  max_size_mb: 100
+  backup_count: 5

@@ -39,6 +39,8 @@ import psutil
 import subprocess
 import os
 import sys
+import yaml
+from pathlib import Path
 from datetime import datetime, timedelta
 from collections import deque
 import curses
@@ -471,11 +473,98 @@ class ConsoleInterface:
     def draw_footer(self, line: int):
         """Draw footer with controls"""
         if line < self.height - 2:
-            footer = "Press 'q' to quit | 'r' to refresh | Updates every 5 seconds"
+            footer = "Press 'q' to quit | 'r' to refresh | 'c' to reload config | Updates every 5 seconds"
             self.stdscr.addstr(self.height - 2, 0, footer[:self.width-1], curses.color_pair(4))
             
             separator = "═" * (self.width - 1)
             self.stdscr.addstr(self.height - 1, 0, separator[:self.width-1], curses.color_pair(4))
+
+class AgentConfigLoader:
+    """
+    Loads and manages agent configuration from YAML files.
+    
+    Provides centralized configuration management for the distributed AI
+    agent network, supporting dynamic agent addition/removal and
+    configuration updates.
+    
+    Attributes:
+        config_path (Path): Path to the agents.yaml configuration file
+        config (Dict): Loaded configuration data
+    """
+    
+    def __init__(self, config_path: str = None):
+        """
+        Initialize configuration loader.
+        
+        Args:
+            config_path: Path to agents.yaml file, defaults to config/agents.yaml
+        """
+        if config_path is None:
+            # Default to config/agents.yaml relative to project root
+            project_root = Path(__file__).parent.parent.parent
+            config_path = project_root / "config" / "agents.yaml"
+        
+        self.config_path = Path(config_path)
+        self.config = {}
+        self.load_config()
+    
+    def load_config(self) -> Dict[str, Any]:
+        """
+        Load agent configuration from YAML file.
+        
+        Returns:
+            Dictionary containing complete configuration
+            
+        Raises:
+            FileNotFoundError: If configuration file doesn't exist
+            yaml.YAMLError: If configuration file is malformed
+        """
+        try:
+            with open(self.config_path, 'r') as f:
+                self.config = yaml.safe_load(f)
+            return self.config
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Agent configuration file not found: {self.config_path}")
+        except yaml.YAMLError as e:
+            raise yaml.YAMLError(f"Invalid YAML configuration: {e}")
+    
+    def get_agents(self) -> Dict[str, Dict[str, Any]]:
+        """
+        Get active agent configurations.
+        
+        Returns:
+            Dictionary of agent configurations filtered by active status
+        """
+        agents = self.config.get('agents', {})
+        # Filter to only active agents
+        return {agent_id: config for agent_id, config in agents.items() 
+                if config.get('status', 'disabled') == 'active'}
+    
+    def get_monitoring_config(self) -> Dict[str, Any]:
+        """
+        Get monitoring configuration settings.
+        
+        Returns:
+            Dictionary containing monitoring parameters
+        """
+        return self.config.get('monitoring', {
+            'refresh_interval_seconds': 5,
+            'performance_window_minutes': 5,
+            'max_history_samples': 100
+        })
+    
+    def get_network_config(self) -> Dict[str, Any]:
+        """
+        Get network configuration settings.
+        
+        Returns:
+            Dictionary containing network parameters
+        """
+        return self.config.get('network', {
+            'timeout_seconds': 30,
+            'retry_attempts': 3,
+            'retry_delay_seconds': 5
+        })
 
 class AdvancedAgentMonitor:
     """
@@ -483,32 +572,38 @@ class AdvancedAgentMonitor:
     
     Orchestrates monitoring of multiple AI agents with a unified interface.
     Manages the curses UI, coordinates data collection, and handles user
-    interaction for the monitoring dashboard.
+    interaction for the monitoring dashboard. Now supports YAML-based
+    configuration for flexible agent management.
     
     Attributes:
+        config_loader (AgentConfigLoader): Configuration management system
         agents (Dict[str, AgentMonitor]): Registry of monitored agents
         ui (ConsoleInterface): Terminal user interface manager
         running (bool): Monitoring loop control flag
         refresh_interval (int): Update frequency in seconds
     """
     
-    def __init__(self):
+    def __init__(self, config_path: str = None):
         """
         Initialize the advanced monitoring system.
         
-        Sets up default Agent 113 configuration and initializes the
-        console interface for real-time monitoring.
+        Loads agent configuration from YAML and initializes monitoring
+        for all active agents defined in the configuration.
+        
+        Args:
+            config_path: Path to agents.yaml configuration file
         """
-        self.agents = {
-            'agent_113': AgentMonitor(
-                agent_id='agent_113_devstral',
-                endpoint='http://192.168.1.113:11434',
-                model='devstral:latest'
-            )
-        }
+        self.config_loader = AgentConfigLoader(config_path)
+        self.agents = {}
         self.ui = ConsoleInterface()
         self.running = False
-        self.refresh_interval = 5  # seconds
+        
+        # Load configuration
+        monitoring_config = self.config_loader.get_monitoring_config()
+        self.refresh_interval = monitoring_config.get('refresh_interval_seconds', 5)
+        
+        # Initialize agents from configuration
+        self._initialize_agents_from_config()
         
     async def run(self):
         """
@@ -566,6 +661,9 @@ class AdvancedAgentMonitor:
                         break
                     elif key == ord('r'):  # 'r' for immediate refresh
                         break
+                    elif key == ord('c'):  # 'c' for reload config
+                        self.reload_config()
+                        break
                     await asyncio.sleep(0.1)
                     
         except KeyboardInterrupt:
@@ -573,6 +671,58 @@ class AdvancedAgentMonitor:
         finally:
             self.ui.cleanup_curses()
             
+    def _initialize_agents_from_config(self):
+        """
+        Initialize agent monitors from YAML configuration.
+        
+        Creates AgentMonitor instances for all active agents defined
+        in the configuration file.
+        """
+        agent_configs = self.config_loader.get_agents()
+        
+        for agent_id, config in agent_configs.items():
+            self.agents[agent_id] = AgentMonitor(
+                agent_id=f"{agent_id}_{config.get('name', 'unknown').lower().replace(' ', '_')}",
+                endpoint=config['endpoint'],
+                model=config['model']
+            )
+            
+            # Set performance targets if specified
+            if 'performance_targets' in config:
+                targets = config['performance_targets']
+                self.agents[agent_id].performance_targets = targets
+    
+    def reload_config(self):
+        """
+        Reload configuration from YAML file and update agent registry.
+        
+        Adds new agents and removes disabled agents based on updated
+        configuration. Existing agents retain their performance history.
+        """
+        try:
+            self.config_loader.load_config()
+            new_agent_configs = self.config_loader.get_agents()
+            
+            # Remove disabled agents
+            current_agents = set(self.agents.keys())
+            new_agents = set(new_agent_configs.keys())
+            disabled_agents = current_agents - new_agents
+            
+            for agent_id in disabled_agents:
+                del self.agents[agent_id]
+            
+            # Add new agents
+            for agent_id in new_agents - current_agents:
+                config = new_agent_configs[agent_id]
+                self.agents[agent_id] = AgentMonitor(
+                    agent_id=f"{agent_id}_{config.get('name', 'unknown').lower().replace(' ', '_')}",
+                    endpoint=config['endpoint'],
+                    model=config['model']
+                )
+                
+        except Exception as e:
+            print(f"Error reloading configuration: {e}")
+    
     def add_agent(self, agent_id: str, endpoint: str, model: str):
         """
         Add a new agent to the monitoring system.
@@ -588,20 +738,38 @@ async def main():
     """
     Main entry point for the advanced monitoring system.
     
-    Creates and configures the monitoring system, optionally adds additional
-    agents, and starts the monitoring loop.
+    Creates and configures the monitoring system from YAML configuration
+    and starts the monitoring loop. All agent configuration is now managed
+    through the config/agents.yaml file.
     
-    Example:
-        # Add additional agents as needed:
-        # monitor.add_agent('agent_114', 'http://192.168.1.114:11434', 'llama3:latest')
-        # monitor.add_agent('agent_115', 'http://192.168.1.115:11434', 'codestral:latest')
+    Configuration:
+        Agents are automatically loaded from config/agents.yaml
+        To add/remove agents, modify the YAML file and restart
+        Press 'r' during monitoring to reload configuration
     """
-    monitor = AdvancedAgentMonitor()
-    
-    # You can add more agents here:
-    # monitor.add_agent('agent_114', 'http://192.168.1.114:11434', 'llama3:latest')
-    
-    await monitor.run()
+    try:
+        monitor = AdvancedAgentMonitor()
+        
+        if not monitor.agents:
+            print("No active agents found in configuration.")
+            print("Please check config/agents.yaml and ensure at least one agent has status: 'active'")
+            return
+            
+        print(f"Loaded {len(monitor.agents)} agents from configuration:")
+        for agent_id, agent in monitor.agents.items():
+            print(f"  - {agent_id}: {agent.endpoint} ({agent.model})")
+        print()
+        
+        await monitor.run()
+        
+    except FileNotFoundError as e:
+        print(f"Configuration error: {e}")
+        print("Please ensure config/agents.yaml exists and is properly formatted.")
+    except yaml.YAMLError as e:
+        print(f"YAML configuration error: {e}")
+        print("Please check config/agents.yaml for syntax errors.")
+    except Exception as e:
+        print(f"Error starting monitor: {e}")
 
 if __name__ == "__main__":
     try:

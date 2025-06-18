@@ -445,7 +445,7 @@ async def run_simple_monitor():
             await print_monitoring_dashboard(agent, system_metrics)
             
             # Wait for next refresh
-            await asyncio.sleep(5)
+            await asyncio.sleep(refresh_interval)
             
     except KeyboardInterrupt:
         print("\n\nMonitoring stopped by user")
