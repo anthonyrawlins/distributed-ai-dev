@@ -2,344 +2,415 @@
 
 ## 🎯 System Overview
 
-You now have a complete distributed AI development coordination system that allows Claude to orchestrate multiple local Ollama agents working on ROCm optimizations. This multiplies your development capacity while minimizing Claude usage costs.
+You now have a complete distributed AI development coordination system that allows Claude to orchestrate multiple local Ollama agents working on any software development project. This multiplies your development capacity while minimizing Claude usage costs.
 
-The system uses environment variables and YAML configuration for flexible deployment on NAS/NFS shared storage, with organized folder structure for better maintainability.
+The system uses environment variables and YAML configuration for flexible deployment, with organized folder structure for better maintainability.
 
 ## 📁 Project Structure
 
 ```
-/home/tony/AI/ROCm/distributed-ai-dev/
+distributed-ai-dev/
 ├── config/
-│   ├── agents.yaml              # Single source of truth for agent configuration
-│   └── auto-agent-analysis/     # Agent capability analysis
-├── orchestration/               # Agent management and coordination hub
-│   ├── claude_interface.py      # Main coordination interface
-│   ├── ai_dev_coordinator.py    # Development coordinator
-│   ├── monitor_agent_113.py     # Agent monitoring tools
-│   └── results/                 # JSON result files from operations
-├── reports/                     # Performance reports and analysis
-├── tests/                       # All test files and integration tests
+│   └── agents.yaml              # Single source of truth for agent configuration
 ├── src/
 │   ├── agents/                  # Agent monitoring applications
 │   ├── core/                    # Configuration and core utilities
 │   ├── interfaces/              # API interfaces
-│   └── kernels/                 # ROCm kernel development
-├── docs/                        # Documentation and agent summaries
-├── bin/                         # Executable launcher scripts
+│   └── quality/                 # Quality control systems
+├── tests/                       # All test files and integration tests
+├── examples/                    # Example workload management
+├── docs/                        # Documentation and guides
+├── reports/                     # Performance reports and analysis
 ├── shared/                      # Shared workspace for agent coordination
-└── .env                         # Environment configuration
+└── requirements.txt             # Python dependencies
 ```
 
 ## 🚀 Quick Start
 
 ### 1. Environment Setup
 
-First, configure your environment variables:
+First, clone and set up the repository:
 
 ```bash
-cd /home/tony/AI/ROCm/distributed-ai-dev/
+git clone https://github.com/anthonyrawlins/distributed-ai-dev.git
+cd distributed-ai-dev
 
-# Copy and customize environment template
-cp .env.template .env
-nano .env  # Edit for your network setup
-
-# Verify configuration
-python3 src/core/config.py
+# Install Python dependencies
+pip install -r requirements.txt
 ```
 
 ### 2. Configure Your Agent Network
 
-Edit your agents in the YAML configuration file:
+Edit the `config/agents.yaml` file to match your infrastructure:
 
-```bash
-nano config/agents.yaml
-```
-
-Example configuration:
 ```yaml
 agents:
-  agent_113:
-    name: "Agent 113 - Kernel Development Architect"
-    endpoint: "http://192.168.1.113:11434"  # Your actual IP
-    model: "devstral:23.6b"
-    specialization: "kernel_dev"
+  acacia_agent:
+    name: "ACACIA Infrastructure Specialist"
+    endpoint: "http://192.168.1.72:11434"
+    model: "deepseek-r1:7b"
+    specialization: "Infrastructure, DevOps & System Architecture"
     status: "active"
-    capabilities:
-      - "HIP kernel optimization"
-      - "ROCm architecture design"
-      - "Memory management"
-    hardware:
-      gpu: "AMD Radeon RX 7900 XTX"
-      vram: "24GB"
-      cores: 16
-      ram: "32GB"
-  
-  agent_27:
-    name: "Agent 27 - Code Generation Support"
-    endpoint: "http://192.168.1.27:11434"   # Your actual IP
-    model: "codellama:latest"
-    specialization: "code_generation"
+    # ... hardware and capability configuration
+
+  walnut_agent:
+    name: "WALNUT Senior Full-Stack Developer"
+    endpoint: "http://192.168.1.27:11434"
+    model: "starcoder2:15b"
+    specialization: "Senior Full-Stack Development & Architecture" 
     status: "active"
-    capabilities:
-      - "GPU programming"
-      - "Code implementation"
-      - "Technical documentation"
+    # ... hardware and capability configuration
+
+  ironwood_agent:
+    name: "IRONWOOD Backend Development Specialist"
+    endpoint: "http://192.168.1.113:11434"
+    model: "deepseek-coder-v2"
+    specialization: "Backend Development & Code Analysis"
+    status: "active"
+    # ... hardware and capability configuration
 ```
 
-### 3. Install Dependencies
+### 3. Verify Agent Connectivity
+
+Test that all your agents are accessible:
 
 ```bash
-cd /home/tony/AI/ROCm/distributed-ai-dev/
-
-# Install Python dependencies
-pip install aiohttp asyncio dataclasses python-dotenv pyyaml
-
-# Or install for system Python
-python3 -m pip install --user aiohttp asyncio dataclasses python-dotenv pyyaml
-```
-
-### 4. Setup Monitoring Tools
-
-```bash
-# Setup executable monitoring tools (one-time)
-source setup-monitoring.sh
-
-# This adds monitoring commands to your PATH:
-# - simple-monitor
-# - advanced-monitor
-# - agent-monitor
-```
-
-### 5. Test the System
-
-```bash
-# Test distributed system
+# Test basic connectivity to all agents
 python3 tests/test_distributed_system.py
 
-# Test agent integration
-python3 tests/quick_agent_integration.py
+# Monitor agent performance
+python3 src/agents/simple_monitor.py
 
-# Test unified pipeline
-python3 tests/test_unified_pipeline.py
+# Advanced monitoring with detailed metrics
+python3 src/agents/advanced_monitor.py
 ```
 
-### 6. Start Using from Claude
+### 4. Test Individual Agents
 
-When you need to delegate ROCm development work, use these commands:
+```bash
+# Test specific agent capabilities
+python3 tests/test_agents.py
+
+# Quick integration test
+python3 tests/quick_agent_integration.py
+```
+
+## 🔧 Detailed Configuration
+
+### Agent Configuration Parameters
+
+Each agent in `config/agents.yaml` supports these parameters:
+
+```yaml
+agent_id:
+  name: "Human-readable agent name"
+  endpoint: "http://ip_address:11434"           # Ollama API endpoint
+  model: "model_name:tag"                       # Default model to use
+  specialization: "Agent expertise area"         # What this agent is best at
+  priority: 1-5                                 # Task priority (1=highest)
+  status: "active" | "disabled"                 # Current operational status
+  
+  capabilities:                                 # List of agent capabilities
+    - "capability_1"
+    - "capability_2"
+    
+  hardware:                                     # Hardware specifications
+    gpu_type: "GPU model"
+    vram_gb: 8
+    cpu_cores: 16
+    ram_gb: 64
+    
+  performance_targets:                          # Expected performance
+    min_tokens_per_second: 5.0
+    max_response_time_ms: 30000
+    target_availability: 0.99
+    
+  available_models:                             # All models on this agent
+    - "model1:latest"
+    - "model2:latest"
+```
+
+### Global Configuration
+
+Configure system-wide settings in `config/agents.yaml`:
+
+```yaml
+monitoring:
+  refresh_interval_seconds: 5              # How often to refresh metrics
+  performance_window_minutes: 5            # Performance averaging window
+  max_history_samples: 100                 # Historical data retention
+
+network:
+  timeout_seconds: 30                      # Request timeout
+  retry_attempts: 3                        # Number of retries
+  retry_delay_seconds: 5                   # Delay between retries
+
+logging:
+  level: "INFO"                            # Log level
+  file: "logs/agent_monitoring.log"        # Log file location
+  max_size_mb: 100                         # Max log file size
+  backup_count: 5                          # Number of backup log files
+```
+
+## 🖥️ Monitoring and Management
+
+### Real-time Monitoring
+
+The system provides two monitoring interfaces:
+
+#### Simple Monitor (Terminal-friendly)
+```bash
+python3 src/agents/simple_monitor.py
+```
+- Clean terminal output
+- Real-time performance metrics
+- Easy to read status indicators
+- Perfect for logging and automation
+
+#### Advanced Monitor (Interactive)
+```bash
+python3 src/agents/advanced_monitor.py
+```
+- btop/nvtop-style interface
+- Interactive controls (q=quit, r=refresh, c=reload config)
+- Color-coded status indicators
+- Real-time resource utilization
+
+### Performance Metrics
+
+The monitoring system tracks:
+- **Tokens per Second (TPS)**: Inference speed
+- **Response Latency**: End-to-end response time
+- **Availability**: Agent uptime percentage
+- **Resource Usage**: CPU, RAM, GPU utilization
+- **Queue Status**: Pending tasks and queue depth
+
+### Alerting Thresholds
+
+Configure alerting in `config/agents.yaml`:
+
+```yaml
+monitoring:
+  alert_thresholds:
+    min_tokens_per_second: 2.0              # Alert if TPS drops below this
+    max_response_time_ms: 60000             # Alert if response time exceeds this
+    min_availability: 0.85                  # Alert if availability drops below this
+```
+
+## 🔌 Integration with Claude
+
+### Basic Usage
 
 ```python
-# Import from the organized structure
-from orchestration.claude_interface import setup_development_network, delegate_work
-from orchestration.ai_dev_coordinator import AIDevCoordinator
-from src.core.config import DistributedAIConfig
+from src.interfaces.claude_interface import setup_development_network, delegate_work
 
-# Setup the network (automatically loads from agents.yaml)
+# Initialize the agent network
 await setup_development_network()
 
-# Load agents from YAML configuration
-agents = DistributedAIConfig.load_agents_from_yaml()
-print(f"Loaded {len(agents)} active agents")
-
-# Delegate work with shared file access
+# Delegate development tasks
 result = await delegate_work(
-    "Optimize FlashAttention kernel for RDNA3",
-    files=["/path/to/attention.cpp"], 
-    priority=5
+    task="Create a React component for user authentication",
+    files=["auth.tsx", "types.ts"],
+    priority=5,
+    preferred_agent="walnut_agent"
 )
 
-# Use the coordination interface
-coordinator = AIDevCoordinator()
-
-# Check progress and collect results
+# Monitor progress
 progress = await check_progress()
 results = await collect_results()
 ```
 
-### 7. Monitor Agent Activity
+### Advanced Coordination
 
-```bash
-# Quick monitoring (after setup-monitoring.sh)
-simple-monitor                    # Simple terminal monitor
-advanced-monitor -s               # Advanced curses monitor (single agent)
-agent-monitor                     # Agent 113 dedicated monitor
-
-# Monitor specific agents
-simple-monitor --endpoint http://192.168.1.27:11434 --model codellama:latest
-simple-monitor --endpoint http://192.168.1.113:11434 --model devstral:23.6b
-
-# Direct Python monitoring
-python3 orchestration/monitor_agent_113.py
-python3 src/agents/simple_monitor.py
-python3 src/agents/advanced_monitor.py
-```
-
-## 🎛️ How Claude Will Use This
-
-### Example Claude Session:
-
-**You:** "Claude, I need to optimize the VAE decoder in Stable Diffusion for ROCm. Can you delegate this to the agent network?"
-
-**Claude:** 
 ```python
-# I'll break this down and delegate to specialized agents
-task_result = await delegate_work(
-    "Optimize VAE decoder convolutions for Stable Diffusion on RDNA3",
-    files=["vae_decoder.py", "conv_kernels.cpp"],
-    priority=4
-)
+from src.core.ai_dev_coordinator import AIDevCoordinator
 
-# While agents work, I'll research related optimizations
-# and plan integration steps...
+coordinator = AIDevCoordinator()
 
-# Check results in a few minutes
-results = await collect_results()
-# Present integrated solution to you
+# Multi-agent task coordination
+await coordinator.coordinate_project({
+    "frontend": {"agent": "walnut_agent", "tasks": ["components", "routing"]},
+    "backend": {"agent": "ironwood_agent", "tasks": ["api", "database"]},
+    "infrastructure": {"agent": "acacia_agent", "tasks": ["docker", "deployment"]}
+})
 ```
 
-### Benefits:
-- **90% reduction** in Claude usage for coding tasks
-- **Parallel development** across your entire network
-- **Specialized expertise** - each agent focused on specific domains
-- **Quality control** - multi-agent review before integration
-- **24/7 development** - agents work while you sleep
+## 🧪 Testing and Validation
 
-## 📊 Current Agent Network
-
-### Agent 113 - Kernel Development Architect
-- **Endpoint**: http://192.168.1.113:11434
-- **Primary Model**: DevStral 23.6B
-- **Hardware**: AMD Radeon RX 7900 XTX (24GB VRAM), 16 cores, 32GB RAM
-- **Specialization**: Senior kernel development, architecture design
-- **Capabilities**: 
-  - HIP kernel optimization
-  - ROCm architecture design
-  - Memory management strategies
-  - Complex performance analysis
-- **Status**: ACTIVE - Working on FlashAttention, VAE decoder optimizations
-
-### Agent 27 - Code Generation Support
-- **Endpoint**: http://192.168.1.27:11434
-- **Primary Models**: CodeLlama (7B), StarCoder2 (15B), DeepSeek Coder V2 (15.7B)
-- **Hardware**: AMD Radeon RX 9060XT (16GB VRAM), 16 cores, 32GB RAM
-- **Specialization**: Code implementation, GPU programming
-- **Capabilities**:
-  - GPU programming and CUDA/HIP porting
-  - Code generation and implementation
-  - Technical documentation
-  - Development support and debugging
-- **Total Models**: 28 specialized models available
-- **Status**: ACTIVE - Ready for intensive development collaboration
-
-### Agent Specialization Mapping
-- **kernel_dev**: Architecture design, optimization strategy, complex reasoning
-- **code_generation**: Implementation, GPU programming, documentation
-- **pytorch_dev**: PyTorch integration, autograd, TunableOp, Python bindings
-- **profiler**: rocprof analysis, benchmarking, bottleneck identification
-- **docs_writer**: API docs, tutorials, installation guides
-- **tester**: Unit tests, integration tests, CI/CD automation
-
-### Collaboration Pattern
-- **Agent 113** provides architectural design and optimization strategy
-- **Agent 27** implements code and handles GPU programming tasks
-- **Both agents** collaborate on optimization and quality assurance
-- **Claude** coordinates the overall development workflow
-
-## 🔄 Typical Workflow
-
-1. **Claude analyzes** your ROCm optimization request
-2. **Breaks down** into specialized subtasks 
-3. **Delegates** to appropriate agents in parallel
-4. **Monitors progress** and coordinates between agents
-5. **Reviews results** with quality control
-6. **Integrates solutions** and creates final PR
-7. **Submits to GitHub** with your approval
-
-## ⚙️ Configuration Management
-
-### Environment Variables
-The system uses `.env` file for configuration:
+### System Integration Tests
 
 ```bash
-# Key environment variables
-DISTRIBUTED_AI_BASE=/home/tony/AI/ROCm/distributed-ai-dev
-AGENT_113_URL=http://192.168.1.113:11434
-AGENT_113_MODEL=devstral:23.6b
-SHARED_WORKSPACE=${DISTRIBUTED_AI_BASE}/shared
-CONFIG_DIR=${DISTRIBUTED_AI_BASE}/config
+# Full system test
+python3 tests/test_distributed_system.py
+
+# Test specific agents
+python3 tests/test_agents.py
+
+# Quick validation
+python3 tests/quick_agent_integration.py
 ```
 
-### YAML Agent Configuration
-All agents are defined in `config/agents.yaml` as the single source of truth:
+### Performance Validation
+
+```bash
+# Benchmark agent performance
+python3 examples/agent_workload.py
+
+# Load testing
+python3 tests/load_test_agents.py  # If available
+```
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+#### Agent Not Responding
+```bash
+# Check agent connectivity
+curl http://192.168.1.xx:11434/api/version
+
+# Check Ollama service status (on agent machine)
+sudo systemctl status ollama
+
+# Restart Ollama if needed
+sudo systemctl restart ollama
+```
+
+#### Performance Issues
+```bash
+# Monitor system resources
+python3 src/agents/advanced_monitor.py
+
+# Check model loading
+curl http://192.168.1.xx:11434/api/ps
+
+# View Ollama logs
+journalctl -u ollama -f
+```
+
+#### Configuration Problems
+```bash
+# Validate YAML syntax
+python3 -c "import yaml; yaml.safe_load(open('config/agents.yaml'))"
+
+# Test configuration loading
+python3 src/core/config.py
+```
+
+### Log Analysis
+
+```bash
+# View recent logs
+tail -f logs/agent_monitoring.log
+
+# Search for errors
+grep -i error logs/agent_monitoring.log
+
+# Performance analysis
+grep -i "performance" logs/agent_monitoring.log
+```
+
+## 📊 Performance Optimization
+
+### Model Selection
+
+Choose models based on task requirements:
+- **Large complex tasks**: starcoder2:15b, deepseek-coder-v2
+- **General development**: devstral:latest, qwen3:latest
+- **Quick responses**: phi4, llama3.1:8b
+- **Specialized tasks**: deepseek-r1:7b (reasoning), codellama (code)
+
+### Resource Management
 
 ```yaml
-agents:
-  agent_113:
-    status: "active"          # active/inactive
-    priority: 5               # 1-5 priority level
-    performance_targets:
-      response_time: "< 30s"
-      concurrent_tasks: 2
+# Optimize concurrent requests based on hardware
+performance_targets:
+  max_concurrent_requests: 1    # For large models (>20B params)
+  max_concurrent_requests: 3    # For smaller models (<15B params)
 ```
 
-### Model Recommendations by Hardware:
-- **8GB VRAM**: CodeLlama-13B, DeepSeek-Coder-6.7B, Qwen2.5-Coder-14B
-- **16GB VRAM**: CodeLlama-34B, DeepSeek-Coder-33B, Qwen2.5-Coder-32B  
-- **24GB VRAM**: DevStral-23.6B, Llama-3.1-70B (for complex analysis)
+### Network Optimization
 
-### Performance Tuning:
-- Configure `max_concurrent` in agents.yaml based on model size
-- Use shared workspace for file coordination between agents
-- Leverage NAS/NFS mounting for distributed file access
-- Monitor agents using built-in monitoring tools
+```yaml
+network:
+  timeout_seconds: 30           # Adjust based on model size
+  retry_attempts: 3             # Increase for unreliable networks
+  keep_alive: true              # Maintain connections
+```
 
-## 🚨 Important Notes
+## 🔄 Maintenance and Updates
 
-- **Always review** agent-generated code before committing
-- **Test thoroughly** on your specific hardware
-- **Start small** with simple optimizations to validate the system
-- **Monitor resource usage** across your network using built-in tools
-- **Keep backups** of working configurations
-- **Use YAML config** as single source of truth for agent management
-- **Environment variables** enable flexible NAS/NFS deployment
-- **Shared workspace** facilitates multi-agent file coordination
-- **Check agent summaries** in `docs/` for detailed capability analysis
-
-## 📈 Success Metrics
-
-Track your distributed development efficiency:
-- Tasks completed per day
-- Code quality scores from reviews  
-- Performance improvements achieved
-- Claude usage reduction percentage (target: 90%)
-- Time from idea to working optimization
-- Agent utilization and coordination effectiveness
-
-## 📚 Additional Resources
-
-- **Agent Analysis**: See `docs/agent_113_summary.md` and `docs/agent_27_summary.md`
-- **Configuration Reference**: `src/core/config.py` for all environment variables
-- **Test Suite**: `tests/` directory for system validation
-- **Results Tracking**: `orchestration/results/` for agent output
-- **Performance Reports**: `reports/` directory for analysis
-
-## 🔧 Troubleshooting
+### Regular Maintenance
 
 ```bash
-# Verify configuration
-python3 src/core/config.py
+# Update models on agents
+# (Run on each agent machine)
+ollama pull starcoder2:15b
+ollama pull deepseek-coder-v2
+ollama pull qwen3:latest
 
-# Test agent connectivity
-python3 tests/quick_agent_integration.py
+# Clean up old logs
+find logs/ -name "*.log" -mtime +30 -delete
 
-# Check shared workspace
-ls -la shared/
-
-# Monitor agent status
-simple-monitor --refresh 10
-
-# View recent results
-ls -la orchestration/results/
+# Update system dependencies
+pip install -r requirements.txt --upgrade
 ```
 
-Your system is now ready to accelerate ROCm development with organized structure, YAML-based configuration, and comprehensive monitoring! 🚀
+### Configuration Updates
+
+```bash
+# Reload configuration without restart
+# Advanced monitor supports 'c' key to reload config
+
+# Validate new configuration
+python3 src/core/config.py
+
+# Restart monitoring systems
+pkill -f simple_monitor.py
+python3 src/agents/simple_monitor.py &
+```
+
+## 🚀 Production Deployment
+
+### Systemd Service Setup
+
+Create a systemd service for continuous monitoring:
+
+```ini
+[Unit]
+Description=Distributed AI Development Monitor
+After=network.target
+
+[Service]
+Type=simple
+User=your-user
+WorkingDirectory=/path/to/distributed-ai-dev
+ExecStart=/usr/bin/python3 src/agents/simple_monitor.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Docker Deployment
+
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+CMD ["python3", "src/agents/simple_monitor.py"]
+```
+
+### Security Considerations
+
+- **Network Security**: Ensure Ollama APIs are not exposed to public internet
+- **Access Control**: Use firewall rules to restrict access to agent endpoints
+- **Monitoring**: Set up log monitoring and alerting for security events
+- **Updates**: Keep Python dependencies and system packages updated
+
+This setup guide provides everything needed to deploy and manage your distributed AI development system effectively across any infrastructure.
