@@ -22,107 +22,168 @@
 #   - Use 'disabled' status to temporarily exclude agents from monitoring
 #
 # Author: Distributed AI Development System
-# Version: 1.0
+# Version: 2.0 - Updated for deepblackcloud infrastructure
 
 agents:
-  agent_113:
-    name: "Qwen2.5-Coder Senior Architect"
-    endpoint: "http://192.168.1.113:11434"
-    model: "qwen2.5-coder:latest"
-    specialization: "Senior Kernel Development & ROCm Optimization"
+  acacia_agent:
+    name: "ACACIA Infrastructure Specialist"
+    endpoint: "http://192.168.1.72:11434"
+    model: "deepseek-r1:7b"
+    specialization: "Infrastructure, DevOps & System Architecture"
     priority: 1
     status: "active"
     capabilities:
-      - "kernel_development"
-      - "rocm_optimization"
-      - "flashattention_implementation"
-      - "vae_decoder_optimization"
-      - "memory_management"
-      - "performance_analysis"
-      - "pytorch_integration"
+      - "infrastructure_design"
+      - "devops_automation" 
+      - "system_architecture"
+      - "database_design"
+      - "security_implementation"
+      - "container_orchestration"
+      - "cloud_deployment"
+      - "monitoring_setup"
     hardware:
-      gpu_type: "NVIDIA RTX 3070"
+      gpu_type: "NVIDIA GTX 1070"
       vram_gb: 8
-      cpu_cores: 24
-      ram_gb: 64
+      cpu_cores: 56  # 2x Intel Xeon E5-2680 v4 (28 cores each)
+      ram_gb: 128
+      storage_type: "NFS Server + NVMe SSDs"
+      network_role: "NAS + Services Host"
     performance_targets:
-      min_tokens_per_second: 50.0
-      max_response_time_ms: 15000
+      min_tokens_per_second: 3.0
+      max_response_time_ms: 30000
       target_availability: 0.99
     tasks:
       current:
-        - "FlashAttention RDNA3 Optimization"
-        - "VAE Decoder Performance Enhancement"
-        - "Advanced Memory Management Systems"
+        - "Docker Swarm management and orchestration"
+        - "Database schema design and optimization"
+        - "Security and authentication implementation"
+        - "CI/CD pipeline configuration"
       completed: []
     monitoring:
       health_check_interval: 30
       performance_check_interval: 300
       metrics_retention_hours: 24
+    available_models:
+      - "deepseek-r1:7b"
+      - "codellama"
+      - "llava"
+      - "qwen2.5"
+      - "llama3.2"
 
-  agent_27:
-    name: "CodeLlama Development Assistant"
+  walnut_agent:
+    name: "WALNUT Senior Full-Stack Developer"
     endpoint: "http://192.168.1.27:11434"
-    model: "codellama:latest"
-    specialization: "Code Generation & Development Support"
+    model: "starcoder2:15b"
+    specialization: "Senior Full-Stack Development & Architecture"
+    priority: 1
+    status: "active"
+    capabilities:
+      - "full_stack_development"
+      - "frontend_frameworks"
+      - "backend_apis"
+      - "database_integration"
+      - "performance_optimization"
+      - "code_architecture"
+      - "react_development"
+      - "nodejs_development"
+      - "typescript_expertise"
+    hardware:
+      gpu_type: "AMD RX 9060 XT (RDNA 4)"
+      vram_gb: 16
+      cpu_cores: 16  # AMD Ryzen 7 5800X3D (8 cores, 16 threads)
+      ram_gb: 64
+      storage_type: "2x 1TB NVMe SSDs"
+      network_role: "Docker Swarm Manager"
+    performance_targets:
+      min_tokens_per_second: 8.0
+      max_response_time_ms: 20000
+      target_availability: 0.99
+    tasks:
+      current:
+        - "Frontend component development"
+        - "API design and implementation"
+        - "Full-stack application architecture"
+        - "Performance optimization"
+      completed: []
+    monitoring:
+      health_check_interval: 30
+      performance_check_interval: 300
+      metrics_retention_hours: 24
+    available_models:
+      - "starcoder2:15b"
+      - "devstral"
+      - "deepseek-coder-v2"
+      - "qwen3"
+      - "phi4"
+      - "llava"
+      - "mistral:7b-instruct"
+      - "llama3.1:8b"
+      - "gemma3:12b"
+      - "qwq"
+      - "qwen2.5-coder"
+      - "deepseek-r1"
+      - "codellama"
+      - "llama3.2"
+      - "llama3.2-vision"
+      - "qwen2"
+      - "gemma2"
+      - "mxbai-embed-large"
+      - "nomic-embed-text"
+
+  ironwood_agent:
+    name: "IRONWOOD Backend Development Specialist"
+    endpoint: "http://192.168.1.113:11434"
+    model: "deepseek-coder-v2"
+    specialization: "Backend Development & Code Analysis"
     priority: 2
     status: "active"
     capabilities:
-      - "code_generation"
-      - "code_completion"
-      - "debugging_assistance"
-      - "code_review"
-      - "algorithm_implementation"
-      - "documentation_generation"
-      - "testing_support"
+      - "backend_development"
+      - "api_design"
+      - "code_analysis"
+      - "debugging"
+      - "testing_frameworks"
+      - "database_optimization"
+      - "microservices_architecture"
+      - "rest_api_development"
+      - "graphql_implementation"
     hardware:
-      gpu_type: "AMD Radeon RX 9060XT"
-      vram_gb: 16
-      cpu_cores: 16
-      ram_gb: 32
+      gpu_type: "NVIDIA RTX 3070"
+      vram_gb: 8
+      cpu_cores: 24  # AMD Ryzen Threadripper 2920X (12 cores, 24 threads)
+      ram_gb: 128
+      storage_type: "High-performance storage array"
+      network_role: "Development Workstation"
     performance_targets:
-      min_tokens_per_second: 4.0
+      min_tokens_per_second: 6.0
       max_response_time_ms: 25000
       target_availability: 0.95
     tasks:
       current:
-        - "Code generation and completion tasks"
-        - "Development workflow automation"
-        - "Algorithm optimization assistance"
+        - "Backend API development"
+        - "Database integration and optimization"
+        - "Code analysis and debugging"
+        - "Testing framework implementation"
       completed: []
     monitoring:
       health_check_interval: 30
       performance_check_interval: 300
       metrics_retention_hours: 24
+    available_models:
+      - "deepseek-coder-v2"
+      - "devstral"
+      - "phi4"
+      - "llama3.1:8b"
+      - "llava"
+      - "qwen2.5-coder"
+      - "mistral:7b-instruct"
 
   # Example configuration for additional agents (uncomment and modify as needed)
-  # agent_114:
-  #   name: "CodeStral Testing Specialist" 
-  #   endpoint: "http://192.168.1.114:11434"
-  #   model: "codestral:latest"
-  #   specialization: "Testing & Quality Assurance"
-  #   priority: 2
-  #   status: "disabled"  # Currently not available
-  #   capabilities:
-  #     - "unit_testing"
-  #     - "integration_testing"
-  #     - "code_review"
-  #     - "performance_benchmarking"
-  #   hardware:
-  #     gpu_type: "NVIDIA RTX 4090"
-  #     vram_gb: 24
-  #     cpu_cores: 12
-  #     ram_gb: 32
-  #   performance_targets:
-  #     min_tokens_per_second: 8.0
-  #     max_response_time_ms: 15000
-  #     target_availability: 0.95
-
-  # agent_115:
+  # documentation_agent:
   #   name: "Documentation Specialist"
-  #   endpoint: "http://192.168.1.115:11434" 
-  #   model: "llama3:latest"
-  #   specialization: "Documentation & Technical Writing"
+  #   endpoint: "http://192.168.1.xx:11434"
+  #   model: "qwen3:latest"
+  #   specialization: "Technical Documentation & API Docs"
   #   priority: 3
   #   status: "disabled"
   #   capabilities:
@@ -130,6 +191,7 @@ agents:
   #     - "api_documentation"
   #     - "user_guides"
   #     - "code_commenting"
+  #     - "markdown_generation"
   #   hardware:
   #     gpu_type: "Integrated"
   #     vram_gb: 0
@@ -139,6 +201,30 @@ agents:
   #     min_tokens_per_second: 3.0
   #     max_response_time_ms: 45000
   #     target_availability: 0.90
+
+  # testing_agent:
+  #   name: "QA Testing Specialist"
+  #   endpoint: "http://192.168.1.xx:11434"
+  #   model: "codellama:latest"
+  #   specialization: "Testing & Quality Assurance"
+  #   priority: 3
+  #   status: "disabled"
+  #   capabilities:
+  #     - "unit_testing"
+  #     - "integration_testing"
+  #     - "e2e_testing"
+  #     - "test_automation"
+  #     - "code_review"
+  #     - "performance_benchmarking"
+  #   hardware:
+  #     gpu_type: "Various"
+  #     vram_gb: 8
+  #     cpu_cores: 16
+  #     ram_gb: 32
+  #   performance_targets:
+  #     min_tokens_per_second: 5.0
+  #     max_response_time_ms: 30000
+  #     target_availability: 0.95
 
 # Global monitoring configuration
 monitoring:
@@ -150,11 +236,14 @@ monitoring:
     max_response_time_ms: 60000
     min_availability: 0.85
   
-# Network configuration
+# Network configuration for deepblackcloud infrastructure
 network:
   timeout_seconds: 30
   retry_attempts: 3
   retry_delay_seconds: 5
+  base_network: "192.168.1.0/24"
+  dns_domain: "home.deepblack.cloud"
+  reverse_proxy: "traefik"
 
 # Logging configuration  
 logging:
@@ -162,3 +251,45 @@ logging:
   file: "logs/agent_monitoring.log"
   max_size_mb: 100
   backup_count: 5
+
+# Infrastructure details for deepblackcloud cluster
+infrastructure:
+  cluster_name: "deepblackcloud"
+  total_agents: 3
+  docker_swarm:
+    manager: "walnut_agent"
+    workers: ["acacia_agent", "ironwood_agent"]
+  services:
+    - name: "n8n"
+      url: "https://n8n.home.deepblack.cloud"
+      description: "Workflow automation with AI integration"
+    - name: "anythingllm"
+      url: "http://192.168.1.72:3051"
+      description: "RAG system with Obsidian integration"
+    - name: "portainer"
+      url: "https://*.home.deepblack.cloud/portainer"
+      description: "Container management"
+    - name: "cockpit"
+      urls:
+        - "https://192.168.1.72:9090"
+        - "https://192.168.1.27:9090"
+        - "https://192.168.1.113:9090"
+      description: "System monitoring and management"
+  
+# Project templates and specializations
+project_templates:
+  web_application:
+    agents: ["walnut_agent", "ironwood_agent", "acacia_agent"]
+    tech_stack: ["React", "Node.js", "PostgreSQL", "Docker"]
+    
+  api_service:
+    agents: ["ironwood_agent", "acacia_agent"]
+    tech_stack: ["Express", "PostgreSQL", "Docker", "Swagger"]
+    
+  mobile_app:
+    agents: ["walnut_agent", "ironwood_agent"]
+    tech_stack: ["React Native", "Expo", "Firebase"]
+    
+  devops_project:
+    agents: ["acacia_agent", "ironwood_agent"]
+    tech_stack: ["Docker", "Kubernetes", "Terraform", "Ansible"]
