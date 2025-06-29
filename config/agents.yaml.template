@@ -1,0 +1,32 @@
+# This is a template for the agent configuration file.
+# Rename this file to agents.yaml and edit it to define your agent network.
+
+# Global monitoring settings
+monitoring:
+  refresh_interval_seconds: 5
+
+# Agent Definitions
+agents:
+  # Example of a frontend developer agent
+  # frontend_dev:
+  #   name: "Frontend Developer"
+  #   endpoint: "http://192.168.1.10:11434" # Replace with your agent's IP
+  #   model: "starcoder2:15b"
+  #   specialization: "react_developer"
+  #   status: "active"
+
+  # Example of a backend developer agent
+  # backend_dev:
+  #   name: "Backend Developer"
+  #   endpoint: "http://192.168.1.11:11434" # Replace with your agent's IP
+  #   model: "deepseek-coder-v2"
+  #   specialization: "python_backend_api"
+  #   status: "active"
+
+  # Example of a disabled documentation writer agent
+  # docs_writer:
+  #   name: "Documentation Writer"
+  #   endpoint: "http://192.168.1.12:11434" # Replace with your agent's IP
+  #   model: "llama3.1:8b"
+  #   specialization: "technical_writer"
+  #   status: "disabled"
